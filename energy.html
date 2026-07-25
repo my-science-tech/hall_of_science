@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Clean Energy Challenge | Periyar Science &amp; Technology Centre</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+Tamil:wght@400;600&display=swap">
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="topbar">
+  <a class="back-link" href="index.html" data-gesture-target>← Exhibit Hall</a>
+  <div class="brand"><span class="gear">⚙</span> Clean Energy Challenge</div>
+</div>
+
+<div class="page-head">
+  <h1>Clean Energy Challenge<span class="lang-ta">பசுமை ஆற்றல் சவால்</span></h1>
+  <p class="sub">Pick the right green energy source to power each ecosystem
+    <span class="lang-ta">சுற்றுச்சூழலை இயக்க சரியான பசுமை ஆற்றலைத் தேர்ந்தெடுக்கவும்</span></p>
+</div>
+
+<div class="stage">
+  <div class="panel stage-panel" id="stage">
+
+    <!-- START -->
+    <div id="screen-start" class="start-screen">
+      <div class="icon-big">🌍</div>
+      <p class="hint-pill">🤏 Pinch here to start · தொடங்க இங்கே பிஞ்ச் செய்யவும்</p><br/>
+      <button class="btn btn-primary" id="start-btn" data-gesture-target>Start · தொடங்கு</button>
+    </div>
+
+    <!-- GAME (hidden until start) -->
+    <div id="screen-game" style="display:none;">
+      <div class="progress-row" id="progress-row"></div>
+      <div class="zone-title" id="zone-title"></div>
+      <div class="zone-sub" id="zone-sub"></div>
+      <div class="choice-row" id="choice-row"></div>
+    </div>
+
+    <!-- COMPLETE -->
+    <div id="screen-complete" class="complete-screen" style="display:none;">
+      <h2>Great Job, Ecologist!<span class="lang-ta">அருமை, சுற்றுச்சூழல் விஞ்ஞானி!</span></h2>
+      <div class="icons">🌱☀️💨🌊🌎</div>
+      <p>You successfully powered all 5 zones with sustainable energy!
+        <br/><span class="lang-ta">நீங்கள் 5 மண்டலங்களுக்கும் வெற்றிகரமாக பசுமை ஆற்றல் அளித்துவிட்டீர்கள்</span></p>
+      <div class="countdown" id="countdown">Returning to start in 6s… · தொடக்கத்திற்கு திரும்புகிறது…</div>
+    </div>
+
+  </div>
+</div>
+
+<script src="js/gesture.js"></script>
+<script>
+Exhibit.init({
+  exhibitHallHref: "index.html",
+  nav: { home: "index.html", playAgain: "energy.html", playAgainLabel: "Play again · மீண்டும் விளையாடு" }
+});
+
+const ZONES = [
+  {
+    name: "Desert Village", nameTa: "பாலைவனக் கிராமம்",
+    correct: "solar",
+    options: [
+      { key: "solar", em: "☀️", label: "Solar", labelTa: "சூரிய ஆற்றல்" },
+      { key: "hydro", em: "🌊", label: "Hydro", labelTa: "நீர் ஆற்றல்" },
+      { key: "biomass", em: "🌱", label: "Biomass", labelTa: "உயிரி ஆற்றல்" },
+    ]
+  },
+  {
+    name: "Coastal Town", nameTa: "கடலோர நகரம்",
+    correct: "wind",
+    options: [
+      { key: "wind", em: "💨", label: "Wind", labelTa: "காற்று ஆற்றல்" },
+      { key: "geo", em: "🌎", label: "Geothermal", labelTa: "புவிவெப்ப ஆற்றல்" },
+      { key: "solar", em: "☀️", label: "Solar", labelTa: "சூரிய ஆற்றல்" },
+    ]
+  },
+  {
+    name: "Mountain River Valley", nameTa: "மலை நதி பள்ளத்தாக்கு",
+    correct: "hydro",
+    options: [
+      { key: "hydro", em: "🌊", label: "Hydro", labelTa: "நீர் ஆற்றல்" },
+      { key: "wind", em: "💨", label: "Wind", labelTa: "காற்று ஆற்றல்" },
+      { key: "biomass", em: "🌱", label: "Biomass", labelTa: "உயிரி ஆற்றல்" },
+    ]
+  },
+  {
+    name: "Volcanic Region", nameTa: "எரிமலைப் பகுதி",
+    correct: "geo",
+    options: [
+      { key: "geo", em: "🌎", label: "Geothermal", labelTa: "புவிவெப்ப ஆற்றல்" },
+      { key: "solar", em: "☀️", label: "Solar", labelTa: "சூரிய ஆற்றல்" },
+      { key: "wind", em: "💨", label: "Wind", labelTa: "காற்று ஆற்றல்" },
+    ]
+  },
+  {
+    name: "Farmland", nameTa: "விவசாய நிலம்",
+    correct: "biomass",
+    options: [
+      { key: "biomass", em: "🌱", label: "Biomass", labelTa: "உயிரி ஆற்றல்" },
+      { key: "hydro", em: "🌊", label: "Hydro", labelTa: "நீர் ஆற்றல்" },
+      { key: "geo", em: "🌎", label: "Geothermal", labelTa: "புவிவெப்ப ஆற்றல்" },
+    ]
+  },
+];
+
+let zoneIndex = 0;
+const progressRow = document.getElementById("progress-row");
+const zoneTitle = document.getElementById("zone-title");
+const zoneSub = document.getElementById("zone-sub");
+const choiceRow = document.getElementById("choice-row");
+
+function shuffled(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+
+function renderProgress() {
+  progressRow.innerHTML = "";
+  ZONES.forEach((_, i) => {
+    const d = document.createElement("div");
+    d.className = "progress-dot" + (i < zoneIndex ? " done" : i === zoneIndex ? " current" : "");
+    progressRow.appendChild(d);
+  });
+}
+
+function renderZone() {
+  renderProgress();
+  const z = ZONES[zoneIndex];
+  zoneTitle.innerHTML = `Zone ${zoneIndex + 1}: ${z.name} <span class="lang-ta">${z.nameTa}</span>`;
+  zoneSub.textContent = "Pinch or tap the clean energy source that fits this zone.";
+  choiceRow.innerHTML = "";
+  shuffled(z.options).forEach(opt => {
+    const btn = document.createElement("div");
+    btn.className = "choice-btn";
+    btn.setAttribute("data-gesture-target", "");
+    btn.innerHTML = `<span class="em">${opt.em}</span><span class="lbl">${opt.label}<span class="lang-ta">${opt.labelTa}</span></span>`;
+    btn.addEventListener("click", () => handleChoice(opt.key, btn));
+    choiceRow.appendChild(btn);
+  });
+}
+
+function handleChoice(key, btnEl) {
+  const z = ZONES[zoneIndex];
+  if (key === z.correct) {
+    btnEl.classList.add("correct");
+    document.querySelectorAll("#choice-row .choice-btn").forEach(b => b.style.pointerEvents = "none");
+    setTimeout(() => {
+      zoneIndex++;
+      if (zoneIndex >= ZONES.length) {
+        showComplete();
+      } else {
+        renderZone();
+      }
+    }, 550);
+  } else {
+    btnEl.classList.add("wrong");
+    setTimeout(() => btnEl.classList.remove("wrong"), 350);
+  }
+}
+
+function showComplete() {
+  document.getElementById("screen-game").style.display = "none";
+  document.getElementById("screen-complete").style.display = "block";
+  let secs = 6;
+  const countdownEl = document.getElementById("countdown");
+  const timer = setInterval(() => {
+    secs--;
+    countdownEl.innerHTML = `Returning to start in ${secs}s… · தொடக்கத்திற்கு திரும்புகிறது…`;
+    if (secs <= 0) {
+      clearInterval(timer);
+      window.location.href = "index.html";
+    }
+  }, 1000);
+}
+
+document.getElementById("start-btn").addEventListener("click", () => {
+  document.getElementById("screen-start").style.display = "none";
+  document.getElementById("screen-game").style.display = "block";
+  zoneIndex = 0;
+  renderZone();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Science in the Air | Periyar Science &amp; Technology Centre</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+Tamil:wght@400;600&display=swap">
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="topbar">
+  <a class="back-link" href="index.html" data-gesture-target>← Exhibit Hall</a>
+  <div class="brand"><span class="gear">⚙</span> Science in the Air</div>
+</div>
+
+<div class="page-head">
+  <h1>Science in the Air<span class="lang-ta">அறிவியல் காற்றில்</span></h1>
+  <p class="sub">Draw with just your hand — pinch to draw, release to lift the pen
+    <span class="lang-ta">உங்கள் கையால் மட்டும் வரையுங்கள் — வரைய பிஞ்ச் செய்யவும், விடுவிக்க விடவும்</span></p>
+</div>
+
+<div class="stage">
+  <div class="panel stage-panel">
+    <div class="toolbar">
+      <span class="hint-pill" id="prompt-pill">✏️ Try drawing: the water cycle · நீர் சுழற்சி</span>
+      <button class="btn btn-ghost" id="new-prompt-btn" data-gesture-target>🎲 New idea · புதிய யோசனை</button>
+    </div>
+    <div class="toolbar">
+      <span class="swatch active" style="background:#F4EFE6" data-color="#F4EFE6" data-gesture-target></span>
+      <span class="swatch" style="background:#6FCFC0" data-color="#6FCFC0" data-gesture-target></span>
+      <span class="swatch" style="background:#E8674A" data-color="#E8674A" data-gesture-target></span>
+      <span class="swatch" style="background:#D4A24C" data-color="#D4A24C" data-gesture-target></span>
+      <button class="btn btn-ghost" id="thin-btn" data-gesture-target>― Thin</button>
+      <button class="btn btn-ghost" id="thick-btn" data-gesture-target>▬ Thick</button>
+      <button class="btn btn-ghost" id="clear-btn" data-gesture-target>🧹 Clear · அழி</button>
+      <button class="btn btn-primary" id="save-btn" data-gesture-target>💾 Save · சேமி</button>
+    </div>
+    <canvas id="draw-canvas"></canvas>
+  </div>
+</div>
+
+<script src="js/gesture.js"></script>
+<script>
+Exhibit.init({
+  exhibitHallHref: "index.html",
+  nav: { home: "index.html", playAgain: "air.html", playAgainLabel: "Clear & retry · அழித்து மீண்டும்" }
+});
+
+const PROMPTS = [
+  { en: "the water cycle", ta: "நீர் சுழற்சி" },
+  { en: "how a rainbow forms", ta: "வானவில் எப்படி உருவாகிறது" },
+  { en: "the solar system", ta: "சூரிய குடும்பம்" },
+  { en: "a plant cell", ta: "தாவர செல்" },
+  { en: "how a rocket launches", ta: "ராக்கெட் எப்படி ஏவப்படுகிறது" },
+  { en: "an electric circuit", ta: "மின்சுற்று" },
+];
+
+const canvas = document.getElementById("draw-canvas");
+const ctx = canvas.getContext("2d");
+let color = "#F4EFE6";
+let lineWidth = 4;
+let drawing = false;
+let lastX = null, lastY = null;
+
+function resizeCanvas() {
+  const rect = canvas.getBoundingClientRect();
+  const prevImg = canvas.width && canvas.height ? ctx.getImageData(0, 0, canvas.width, canvas.height) : null;
+  canvas.width = rect.width * devicePixelRatio;
+  canvas.height = rect.height * devicePixelRatio;
+  ctx.scale(devicePixelRatio, devicePixelRatio);
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+}
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+
+function drawTo(x, y) {
+  const rect = canvas.getBoundingClientRect();
+  const cx = x - rect.left;
+  const cy = y - rect.top;
+  if (cx < 0 || cy < 0 || cx > rect.width || cy > rect.height) { lastX = lastY = null; return; }
+  if (lastX === null) { lastX = cx; lastY = cy; return; }
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lineWidth;
+  ctx.beginPath();
+  ctx.moveTo(lastX, lastY);
+  ctx.lineTo(cx, cy);
+  ctx.stroke();
+  lastX = cx; lastY = cy;
+}
+
+window.addEventListener("exhibit:point", (e) => {
+  const { x, y, pinching } = e.detail;
+  if (pinching) {
+    drawTo(x, y);
+  } else {
+    lastX = lastY = null;
+  }
+});
+
+document.querySelectorAll(".swatch").forEach(sw => {
+  sw.addEventListener("click", () => {
+    document.querySelectorAll(".swatch").forEach(s => s.classList.remove("active"));
+    sw.classList.add("active");
+    color = sw.getAttribute("data-color");
+  });
+});
+
+document.getElementById("thin-btn").addEventListener("click", () => lineWidth = 3);
+document.getElementById("thick-btn").addEventListener("click", () => lineWidth = 10);
+
+document.getElementById("clear-btn").addEventListener("click", () => {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+});
+
+document.getElementById("save-btn").addEventListener("click", () => {
+  const link = document.createElement("a");
+  link.download = "science-in-the-air.png";
+  link.href = canvas.toDataURL("image/png");
+  link.click();
+});
+
+function setPrompt() {
+  const p = PROMPTS[Math.floor(Math.random() * PROMPTS.length)];
+  document.getElementById("prompt-pill").textContent = `✏️ Try drawing: ${p.en} · ${p.ta}`;
+}
+document.getElementById("new-prompt-btn").addEventListener("click", setPrompt);
+</script>
+</body>
+</html>

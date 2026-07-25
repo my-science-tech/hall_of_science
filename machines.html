@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Simple Machines Challenge | Periyar Science &amp; Technology Centre</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+Tamil:wght@400;600&display=swap">
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="topbar">
+  <a class="back-link" href="index.html" data-gesture-target>← Exhibit Hall</a>
+  <div class="brand"><span class="gear">⚙</span> Simple Machines Challenge</div>
+</div>
+
+<div class="page-head">
+  <h1>Simple Machines Challenge<span class="lang-ta">எளிய இயந்திரங்கள் சவால்</span></h1>
+  <p class="sub">Pick the right tool to solve each problem
+    <span class="lang-ta">சரியான கருவியை தேர்ந்தெடுத்து பிரச்சனையை தீர்க்கவும்</span></p>
+</div>
+
+<div class="stage">
+  <div class="panel stage-panel" id="stage">
+
+    <div id="screen-start" class="start-screen">
+      <div class="icon-big">🛠️</div>
+      <p class="hint-pill">🤏 Pinch here to start · தொடங்க இங்கே பிஞ்ச் செய்யவும்</p><br/>
+      <button class="btn btn-primary" id="start-btn" data-gesture-target>Start · தொடங்கு</button>
+    </div>
+
+    <div id="screen-game" style="display:none;">
+      <div class="progress-row" id="progress-row"></div>
+      <div class="zone-title" id="zone-title"></div>
+      <div class="zone-sub" id="zone-sub"></div>
+      <div class="choice-row" id="choice-row"></div>
+    </div>
+
+    <div id="screen-complete" class="complete-screen" style="display:none;">
+      <h2>Great Job, Engineer!<span class="lang-ta">அருமை, பொறியாளர்!</span></h2>
+      <div class="icons">⚖️🪝⚙️📐🔩</div>
+      <p>You solved all 5 puzzles with the right simple machine!
+        <br/><span class="lang-ta">நீங்கள் 5 புதிர்களையும் சரியான எளிய இயந்திரத்துடன் தீர்த்துவிட்டீர்கள்!</span></p>
+      <div class="countdown" id="countdown">Returning to start in 6s… · தொடக்கத்திற்கு திரும்புகிறது…</div>
+    </div>
+
+  </div>
+</div>
+
+<script src="js/gesture.js"></script>
+<script>
+Exhibit.init({
+  exhibitHallHref: "index.html",
+  nav: { home: "index.html", playAgain: "machines.html", playAgainLabel: "Play again · மீண்டும் விளையாடு" }
+});
+
+const TOOLS = {
+  lever:    { em: "⚖️", label: "Lever", labelTa: "நெம்புகோல்" },
+  pulley:   { em: "🪝", label: "Pulley", labelTa: "கப்பி" },
+  wheel:    { em: "⚙️", label: "Wheel & Axle", labelTa: "சக்கரம் & அச்சு" },
+  incline:  { em: "📐", label: "Inclined Plane", labelTa: "சாய்வுத் தளம்" },
+  wedge:    { em: "🔩", label: "Wedge", labelTa: "ஆப்பு" },
+};
+
+const PUZZLES = [
+  {
+    problem: "Lift one end of a heavy rock using much less effort.",
+    problemTa: "குறைந்த முயற்சியில் கனமான பாறையின் ஒரு முனையைத் தூக்குங்கள்.",
+    correct: "lever", distractors: ["wheel", "wedge"],
+  },
+  {
+    problem: "Raise a bucket of water straight up from a deep well.",
+    problemTa: "ஆழமான கிணற்றிலிருந்து தண்ணீர் வாளியை நேராக மேலே தூக்குங்கள்.",
+    correct: "pulley", distractors: ["incline", "lever"],
+  },
+  {
+    problem: "Move a heavy cart across the yard with minimal push.",
+    problemTa: "குறைந்த தள்ளுதலுடன் கனமான வண்டியை முற்றத்தில் நகர்த்துங்கள்.",
+    correct: "wheel", distractors: ["wedge", "pulley"],
+  },
+  {
+    problem: "Load heavy boxes into a truck bed without lifting them up.",
+    problemTa: "பெட்டிகளை தூக்காமல் லாரியில் ஏற்றுங்கள்.",
+    correct: "incline", distractors: ["lever", "wheel"],
+  },
+  {
+    problem: "Split a log of wood into two pieces.",
+    problemTa: "ஒரு மரக்கட்டையை இரண்டாகப் பிளக்கவும்.",
+    correct: "wedge", distractors: ["pulley", "incline"],
+  },
+];
+
+let idx = 0;
+const progressRow = document.getElementById("progress-row");
+const zoneTitle = document.getElementById("zone-title");
+const zoneSub = document.getElementById("zone-sub");
+const choiceRow = document.getElementById("choice-row");
+
+function shuffled(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+
+function renderProgress() {
+  progressRow.innerHTML = "";
+  PUZZLES.forEach((_, i) => {
+    const d = document.createElement("div");
+    d.className = "progress-dot" + (i < idx ? " done" : i === idx ? " current" : "");
+    progressRow.appendChild(d);
+  });
+}
+
+function renderPuzzle() {
+  renderProgress();
+  const p = PUZZLES[idx];
+  zoneTitle.innerHTML = `Puzzle ${idx + 1}`;
+  zoneSub.innerHTML = `${p.problem}<br/><span class="lang-ta">${p.problemTa}</span>`;
+  choiceRow.innerHTML = "";
+  const keys = shuffled([p.correct, ...p.distractors]);
+  keys.forEach(key => {
+    const tool = TOOLS[key];
+    const btn = document.createElement("div");
+    btn.className = "choice-btn";
+    btn.setAttribute("data-gesture-target", "");
+    btn.innerHTML = `<span class="em">${tool.em}</span><span class="lbl">${tool.label}<span class="lang-ta">${tool.labelTa}</span></span>`;
+    btn.addEventListener("click", () => handleChoice(key, btn));
+    choiceRow.appendChild(btn);
+  });
+}
+
+function handleChoice(key, btnEl) {
+  const p = PUZZLES[idx];
+  if (key === p.correct) {
+    btnEl.classList.add("correct");
+    document.querySelectorAll("#choice-row .choice-btn").forEach(b => b.style.pointerEvents = "none");
+    setTimeout(() => {
+      idx++;
+      if (idx >= PUZZLES.length) {
+        showComplete();
+      } else {
+        renderPuzzle();
+      }
+    }, 550);
+  } else {
+    btnEl.classList.add("wrong");
+    setTimeout(() => btnEl.classList.remove("wrong"), 350);
+  }
+}
+
+function showComplete() {
+  document.getElementById("screen-game").style.display = "none";
+  document.getElementById("screen-complete").style.display = "block";
+  let secs = 6;
+  const countdownEl = document.getElementById("countdown");
+  const timer = setInterval(() => {
+    secs--;
+    countdownEl.innerHTML = `Returning to start in ${secs}s… · தொடக்கத்திற்கு திரும்புகிறது…`;
+    if (secs <= 0) {
+      clearInterval(timer);
+      window.location.href = "index.html";
+    }
+  }, 1000);
+}
+
+document.getElementById("start-btn").addEventListener("click", () => {
+  document.getElementById("screen-start").style.display = "none";
+  document.getElementById("screen-game").style.display = "block";
+  idx = 0;
+  renderPuzzle();
+});
+</script>
+</body>
+</html>

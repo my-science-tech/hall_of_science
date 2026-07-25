@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Everyday Science Kiosk | Periyar Science &amp; Technology Centre</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+Tamil:wght@400;600&display=swap">
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="topbar">
+  <a class="back-link" href="index.html" data-gesture-target>← Exhibit Hall</a>
+  <div class="brand"><span class="gear">⚙</span> Everyday Science Kiosk</div>
+</div>
+
+<div class="page-head">
+  <h1>Everyday Science Kiosk<span class="lang-ta">அன்றாட அறிவியல் ஆய்வகம்</span></h1>
+  <p class="sub">Grab the right part with your hand to make each idea happen
+    <span class="lang-ta">ஒவ்வொரு கருத்தையும் நிகழ்த்த சரியான பகுதியை உங்கள் கையால் பிடிக்கவும்</span></p>
+</div>
+
+<div class="stage">
+  <div class="panel stage-panel" id="stage">
+
+    <div id="screen-start" class="start-screen">
+      <div class="icon-big">🔬</div>
+      <p class="hint-pill">🖐️ Grab (pinch) here to start · தொடங்க இங்கே பிடிக்கவும்</p><br/>
+      <button class="btn btn-primary" id="start-btn" data-gesture-target>Start · தொடங்கு</button>
+    </div>
+
+    <div id="screen-game" style="display:none;">
+      <div class="progress-row" id="progress-row"></div>
+      <div class="zone-title" id="zone-title"></div>
+      <div class="zone-sub" id="zone-sub"></div>
+      <div class="grab-scene" id="grab-scene"></div>
+      <div class="explain-box" id="explain-box"></div>
+    </div>
+
+    <div id="screen-complete" class="complete-screen" style="display:none;">
+      <h2>Great Job, Scientist!<span class="lang-ta">அருமை, விஞ்ஞானி!</span></h2>
+      <div class="icons">🧲⚡🌊🧊🪁</div>
+      <p>You uncovered the science behind all 5 everyday ideas!
+        <br/><span class="lang-ta">அன்றாட வாழ்வின் 5 அறிவியல் கருத்துகளையும் நீங்கள் கண்டறிந்துவிட்டீர்கள்!</span></p>
+      <div class="countdown" id="countdown">Returning to start in 6s… · தொடக்கத்திற்கு திரும்புகிறது…</div>
+    </div>
+
+  </div>
+</div>
+
+<script src="js/gesture.js"></script>
+<script>
+Exhibit.init({
+  exhibitHallHref: "index.html",
+  nav: { home: "index.html", playAgain: "science.html", playAgainLabel: "Play again · மீண்டும் விளையாடு" }
+});
+
+const IDEAS = [
+  {
+    title: "Friction", titleTa: "உராய்வு",
+    prompt: "Which surface will slow a sliding block down the most?",
+    promptTa: "நகரும் தொகுதியை எது அதிகம் மெதுவாக்கும்?",
+    items: [
+      { key: "sandpaper", em: "🧱", label: "Rough surface", labelTa: "கரடுமுரடான பரப்பு" },
+      { key: "ice", em: "🧊", label: "Smooth ice", labelTa: "மென்மையான பனி" },
+    ],
+    correct: "sandpaper",
+    explain: "Rough surfaces have more friction, which resists motion and slows objects down faster than smooth ones.",
+    explainTa: "கரடுமுரடான பரப்புகளில் அதிக உராய்வு உள்ளது, இது இயக்கத்தை எதிர்த்து பொருட்களை விரைவாக மெதுவாக்குகிறது.",
+  },
+  {
+    title: "Magnetism", titleTa: "காந்தவியல்",
+    prompt: "Grab the object the magnet will actually pull in.",
+    promptTa: "காந்தம் உண்மையில் ஈர்க்கும் பொருளைப் பிடிக்கவும்.",
+    items: [
+      { key: "nail", em: "🔩", label: "Iron nail", labelTa: "இரும்பு ஆணி" },
+      { key: "leaf", em: "🍃", label: "Dry leaf", labelTa: "உலர்ந்த இலை" },
+    ],
+    correct: "nail",
+    explain: "Magnets attract iron, nickel, and cobalt because of unpaired electrons that align with the magnetic field.",
+    explainTa: "இரும்பு, நிக்கல், கோபால்ட் போன்றவற்றை காந்தம் ஈர்க்கும், ஏனெனில் அவற்றின் எலக்ட்ரான்கள் காந்தப்புலத்துடன் சீரமைகின்றன.",
+  },
+  {
+    title: "Buoyancy", titleTa: "மிதப்புத்தன்மை",
+    prompt: "Which object floats when dropped in water?",
+    promptTa: "தண்ணீரில் போட்டால் எது மிதக்கும்?",
+    items: [
+      { key: "cork", em: "🪵", label: "Wood cork", labelTa: "மர அடைப்பான்" },
+      { key: "stone", em: "🪨", label: "Stone", labelTa: "கல்" },
+    ],
+    correct: "cork",
+    explain: "Objects float when they're less dense than water — wood is, so it pushes aside less weight of water than its own.",
+    explainTa: "தண்ணீரை விட குறைந்த அடர்த்தி உள்ள பொருட்கள் மிதக்கும் — மரம் அப்படிப்பட்டது.",
+  },
+  {
+    title: "Static Electricity", titleTa: "நிலை மின்னோட்டம்",
+    prompt: "Grab the balloon after it's rubbed on hair — what does it attract?",
+    promptTa: "தலைமுடியில் தேய்த்த பலூன் எதை ஈர்க்கும்?",
+    items: [
+      { key: "paper", em: "📄", label: "Tiny paper bits", labelTa: "சிறிய காகித துண்டுகள்" },
+      { key: "coin", em: "🪙", label: "Metal coin", labelTa: "உலோக நாணயம்" },
+    ],
+    correct: "paper",
+    explain: "Rubbing a balloon on hair transfers electrons, giving it a charge that attracts light, neutral objects like paper bits.",
+    explainTa: "பலூனை முடியில் தேய்க்கும்போது எலக்ட்ரான்கள் மாறுகின்றன, இது இலகுவான காகிதத் துண்டுகளை ஈர்க்கிறது.",
+  },
+  {
+    title: "Gravity", titleTa: "ஈர்ப்பு விசை",
+    prompt: "Drop both from the same height in air — which lands first?",
+    promptTa: "இரண்டையும் ஒரே உயரத்திலிருந்து விட்டால் எது முதலில் விழும்?",
+    items: [
+      { key: "ball", em: "🏀", label: "Basketball", labelTa: "கூடைப்பந்து" },
+      { key: "feather", em: "🪶", label: "Feather", labelTa: "இறகு" },
+    ],
+    correct: "ball",
+    explain: "In air, a feather is slowed much more by air resistance than a dense ball, so the ball lands first (in a vacuum, they'd land together).",
+    explainTa: "காற்றில், இறகு காற்று எதிர்ப்பால் அதிகம் மெதுவாகிறது, எனவே பந்து முதலில் விழும்.",
+  },
+];
+
+let idx = 0;
+const progressRow = document.getElementById("progress-row");
+const zoneTitle = document.getElementById("zone-title");
+const zoneSub = document.getElementById("zone-sub");
+const scene = document.getElementById("grab-scene");
+const explainBox = document.getElementById("explain-box");
+
+function shuffled(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+
+function renderProgress() {
+  progressRow.innerHTML = "";
+  IDEAS.forEach((_, i) => {
+    const d = document.createElement("div");
+    d.className = "progress-dot" + (i < idx ? " done" : i === idx ? " current" : "");
+    progressRow.appendChild(d);
+  });
+}
+
+function renderIdea() {
+  renderProgress();
+  explainBox.className = "explain-box";
+  explainBox.innerHTML = "";
+  const idea = IDEAS[idx];
+  zoneTitle.innerHTML = `${idea.title} <span class="lang-ta">${idea.titleTa}</span>`;
+  zoneSub.innerHTML = `${idea.prompt}<br/><span class="lang-ta">${idea.promptTa}</span>`;
+  scene.innerHTML = "";
+  shuffled(idea.items).forEach(item => {
+    const el = document.createElement("div");
+    el.className = "grab-item";
+    el.setAttribute("data-gesture-target", "");
+    el.innerHTML = `<span class="em">${item.em}</span>${item.label}<div class="lang-ta">${item.labelTa}</div>`;
+    el.addEventListener("click", () => handleGrab(idea, item.key, el));
+    scene.appendChild(el);
+  });
+}
+
+function handleGrab(idea, key, el) {
+  if (key === idea.correct) {
+    el.classList.add("correct");
+    document.querySelectorAll("#grab-scene .grab-item").forEach(b => b.style.pointerEvents = "none");
+    explainBox.innerHTML = `<strong>Why:</strong> ${idea.explain}<br/><span class="lang-ta">${idea.explainTa}</span>`;
+    explainBox.classList.add("show");
+    setTimeout(() => {
+      idx++;
+      if (idx >= IDEAS.length) {
+        showComplete();
+      } else {
+        renderIdea();
+      }
+    }, 2200);
+  } else {
+    el.classList.add("wrong");
+    setTimeout(() => el.classList.remove("wrong"), 350);
+  }
+}
+
+function showComplete() {
+  document.getElementById("screen-game").style.display = "none";
+  document.getElementById("screen-complete").style.display = "block";
+  let secs = 6;
+  const countdownEl = document.getElementById("countdown");
+  const timer = setInterval(() => {
+    secs--;
+    countdownEl.innerHTML = `Returning to start in ${secs}s… · தொடக்கத்திற்கு திரும்புகிறது…`;
+    if (secs <= 0) {
+      clearInterval(timer);
+      window.location.href = "index.html";
+    }
+  }, 1000);
+}
+
+document.getElementById("start-btn").addEventListener("click", () => {
+  document.getElementById("screen-start").style.display = "none";
+  document.getElementById("screen-game").style.display = "block";
+  idx = 0;
+  renderIdea();
+});
+</script>
+</body>
+</html>

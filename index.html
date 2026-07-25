@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Exhibit Hall | Periyar Science &amp; Technology Centre</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+Tamil:wght@400;600&display=swap">
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="gear">⚙</span> Periyar Science &amp; Technology Centre</div>
+  <!-- gesture-status LED injected here by gesture.js -->
+</div>
+
+<div class="page-head">
+  <span class="eyebrow">Interactive Exhibit Hall</span>
+  <h1>Choose your experiment
+    <span class="lang-ta">உங்கள் பரிசோதனையைத் தேர்ந்தெடுக்கவும்</span>
+  </h1>
+  <p class="sub">
+    Four hands-on exhibits, one gallery floor. Every one of them is controlled the same way —
+    no touchscreen, no keyboard.
+    <span class="lang-ta">நான்கு அனுபவங்கள், ஒரே தொடக்கப் பக்கம். எதுவும் ஸ்பரிசம் அல்லது விசைப்பலகை தேவையில்லை.</span>
+  </p>
+  <div class="visitor-counter">TODAY'S VISITORS <b id="visitor-count">0</b></div>
+</div>
+
+<div class="grid cards-4">
+
+  <a class="panel card" data-gesture-target href="energy.html">
+    <div class="icon">🌱</div>
+    <div class="meta">Pinch · 5 zones</div>
+    <h2>Clean Energy Challenge<span class="lang-ta">பசுமை ஆற்றல் சவால்</span></h2>
+    <p class="desc">Pick the right green energy source to power each ecosystem.
+      <span class="lang-ta">சுற்றுச்சூழலை இயக்க சரியான பசுமை ஆற்றலைத் தேர்ந்தெடுக்கவும்.</span></p>
+    <span class="enter">Enter exhibit →</span>
+  </a>
+
+  <a class="panel card" data-gesture-target href="machines.html">
+    <div class="icon">⚙️</div>
+    <div class="meta">Pinch · 5 puzzles</div>
+    <h2>Simple Machines Challenge<span class="lang-ta">எளிய இயந்திரங்கள் சவால்</span></h2>
+    <p class="desc">Pick the right tool to solve each problem.
+      <span class="lang-ta">சரியான கருவியை தேர்ந்தெடுத்து பிரச்சனையை தீர்க்கவும்.</span></p>
+    <span class="enter">Enter exhibit →</span>
+  </a>
+
+  <a class="panel card" data-gesture-target href="science.html">
+    <div class="icon">🔬</div>
+    <div class="meta">Hand-tracking · 5 ideas</div>
+    <h2>Everyday Science Kiosk<span class="lang-ta">அன்றாட அறிவியல் ஆய்வகம்</span></h2>
+    <p class="desc">Five ideas behind the world around you — grab the right part with your hand to make each one happen.
+      <span class="lang-ta">உங்களைச் சுற்றியுள்ள உலகின் பின்னணியில் உள்ள ஐந்து கருத்துகள்.</span></p>
+    <span class="enter">Enter exhibit →</span>
+  </a>
+
+  <a class="panel card" data-gesture-target href="air.html">
+    <div class="icon">🚀</div>
+    <div class="meta">Hand-tracking · drawing</div>
+    <h2>Science in the Air<span class="lang-ta">அறிவியல் காற்றில்</span></h2>
+    <p class="desc">Draw science with just your hand — no touch, no marker.
+      <span class="lang-ta">உங்கள் கையால் மட்டும் அறிவியலை வரையுங்கள்.</span></p>
+    <span class="enter">Enter exhibit →</span>
+  </a>
+
+</div>
+
+<footer class="notice">
+  🔒 No video is recorded or stored. The camera is used only for live hand tracking, where applicable.<br/>
+  எந்த வீடியோவும் பதிவு செய்யப்படவில்லை. கேமரா நேரடி கை கண்காணிப்புக்கு மட்டுமே பயன்படுத்தப்படுகிறது.
+</footer>
+
+<script src="js/gesture.js"></script>
+<script>
+  Exhibit.init({ exhibitHallHref: "index.html" });
+  Exhibit.bumpVisitorCounter("visitor-count");
+</script>
+</body>
+</html>
